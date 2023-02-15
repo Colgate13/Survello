@@ -1,4 +1,4 @@
-<h1 align="center">ddd-typescript-either</h1>
+<h1 align="center">Survello</h1>
 
 <p align="center">
   <a href="#about">Sobre este projeto</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;

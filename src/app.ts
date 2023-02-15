@@ -1,1 +1,3 @@
-console.log('Hello World')
+export function app() {
+  console.log('Hello World');
+}
