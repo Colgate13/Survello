@@ -7,9 +7,11 @@ import { User } from './User';
 interface JWTData {
   userId: string;
   token: string;
+  features: string[];
 }
 
 export interface JWTTokenPayload {
+  features: string[];
   exp: number;
   sub: string;
 }
@@ -17,30 +19,19 @@ export interface JWTTokenPayload {
 export class JWT {
   public readonly userId: string;
   public readonly token: string;
+  public readonly features: string[];
 
-  private constructor({ userId, token }: JWTData) {
+  private constructor({ userId, features, token }: JWTData) {
     this.userId = userId;
     this.token = token;
+    this.features = features;
   }
-
-  // public getUserId(): Either<InvalidJWTTokenError, string> {
-  //   const jwtPayloadOrError = JWT.verifyAndDecodeToken(this.token)
-
-  //   if (jwtPayloadOrError.isLeft()) {
-  //     return left(jwtPayloadOrError.value)
-  //   }
-
-  //   const userId = jwtPayloadOrError.value.sub
-
-  //   return right(userId)
-  // }
 
   static verifyAndDecodeToken(
     token: string,
   ): Either<InvalidJWTTokenError, JWTTokenPayload> {
     try {
       const decoded = verify(token, jwtConfig.jwt.secret) as JWTTokenPayload;
-
       return right(decoded);
     } catch (err) {
       return left(new InvalidJWTTokenError());
@@ -54,19 +45,29 @@ export class JWT {
       return left(jwtPayloadOrError.value);
     }
 
-    const jwt = new JWT({ token, userId: jwtPayloadOrError.value.sub });
+    const jwt = new JWT({
+      userId: jwtPayloadOrError.value.sub,
+      features: jwtPayloadOrError.value.features,
+      token,
+    });
 
     return right(jwt);
   }
 
-  static signUser(user: User): JWT {
-    const token = sign({}, jwtConfig.jwt.secret, {
-      subject: user.id,
-      expiresIn: jwtConfig.jwt.expiresIn,
-    });
+  static signUser(user: User): Either<InvalidJWTTokenError, JWT> {
+    const token = sign(
+      {
+        features: user.features,
+      },
+      jwtConfig.jwt.secret,
+      {
+        subject: user.id,
+        expiresIn: jwtConfig.jwt.expiresIn,
+      },
+    );
 
-    const jwt = new JWT({ userId: user.id, token });
+    const jwt = new JWT({ userId: user.id, features: user.features, token });
 
-    return jwt;
+    return right(jwt);
   }
 }
