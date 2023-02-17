@@ -1,9 +1,11 @@
+import { uidCreate } from '../../shared/Utils/uid';
+
 export class Entity<T> {
   protected readonly _id: string;
   public readonly props: T;
 
   constructor(props: T, id?: string) {
-    this._id = id || String(Math.floor(Date.now() / 1000));
+    this._id = id || uidCreate();
     this.props = props;
   }
 

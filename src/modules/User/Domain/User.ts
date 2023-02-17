@@ -62,4 +62,20 @@ export class User extends Entity<IUser> {
 
     return right(user);
   }
+
+  static instancie(
+    UserProps: IUser,
+    id: string,
+  ): Either<
+    InvalidEmailError | InvalidPasswordError | InvalidUsernameError,
+    User
+  > {
+    if (!UserProps.name) {
+      return left(new InvalidUsernameError());
+    }
+
+    const user = new User(UserProps, id);
+
+    return right(user);
+  }
 }
