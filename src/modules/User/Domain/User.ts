@@ -4,9 +4,9 @@ import { Either, left, right } from '../../../core/logic/Either';
 import { InvalidEmailError } from './Errors/InvalidEmailError';
 import { InvalidPasswordError } from './Errors/InvalidPasswordError';
 import { InvalidUsernameError } from './Errors/InvalidUsernameError';
-import { IUser, IUserView } from './IUser';
+import { IUserDTO, IUserView } from './IUser';
 
-export class User extends Entity<IUser> {
+export class User extends Entity<IUserDTO> {
   get id(): string {
     return this._id;
   }
@@ -43,12 +43,12 @@ export class User extends Entity<IUser> {
     };
   }
 
-  private constructor(UserProps: IUser, id?: string) {
+  private constructor(UserProps: IUserDTO, id?: string) {
     super(UserProps, id || uidCreate());
   }
 
   static create(
-    UserProps: IUser,
+    UserProps: IUserDTO,
     id?: string,
   ): Either<
     InvalidEmailError | InvalidPasswordError | InvalidUsernameError,
@@ -64,7 +64,7 @@ export class User extends Entity<IUser> {
   }
 
   static instancie(
-    UserProps: IUser,
+    UserProps: IUserDTO,
     id: string,
   ): Either<
     InvalidEmailError | InvalidPasswordError | InvalidUsernameError,

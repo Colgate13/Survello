@@ -1,7 +1,7 @@
 import { Email } from './Email';
 import { Password } from './Password';
 
-export interface IUser {
+export interface IUserDTO {
   name: string;
   country: string;
   postalCode: string;
