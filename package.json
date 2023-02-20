@@ -8,8 +8,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "build": "tsc",
-    "dev": "DEBUG=app:* ts-node --transpile-only src/app.ts",
-    "start": "node dist/app.js start:app"
+    "dev": "DEBUG=app:* ts-node --transpile-only src/app.ts start:app multi=false",
+    "start": "node dist/app.js start:app multi=true"
   },
   "repository": {
     "type": "git",
