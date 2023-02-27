@@ -6,6 +6,11 @@ import { InvalidPasswordError } from './Errors/InvalidPasswordError';
 import { InvalidUsernameError } from './Errors/InvalidUsernameError';
 import { IUserDTO, IUserView } from './IUser';
 
+export type ICreate = Either<
+  InvalidEmailError | InvalidPasswordError | InvalidUsernameError,
+  User
+>;
+
 export class User extends Entity<IUserDTO> {
   get id(): string {
     return this._id;
@@ -47,13 +52,7 @@ export class User extends Entity<IUserDTO> {
     super(UserProps, id || uidCreate());
   }
 
-  static create(
-    UserProps: IUserDTO,
-    id?: string,
-  ): Either<
-    InvalidEmailError | InvalidPasswordError | InvalidUsernameError,
-    User
-  > {
+  static create(UserProps: IUserDTO, id?: string): ICreate {
     if (!UserProps.name) {
       return left(new InvalidUsernameError());
     }
@@ -63,13 +62,7 @@ export class User extends Entity<IUserDTO> {
     return right(user);
   }
 
-  static instancie(
-    UserProps: IUserDTO,
-    id: string,
-  ): Either<
-    InvalidEmailError | InvalidPasswordError | InvalidUsernameError,
-    User
-  > {
+  static instancie(UserProps: IUserDTO, id: string): ICreate {
     if (!UserProps.name) {
       return left(new InvalidUsernameError());
     }
