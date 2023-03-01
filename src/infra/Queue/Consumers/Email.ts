@@ -1,6 +1,11 @@
 import { IChannel } from '../RabbitQueu';
 import Debug from 'debug';
 const debug = Debug('app:queue:consumer:email');
+import {
+  EmailBroadcasting,
+  ISendMail,
+} from '../../../modules/Broadcasting/useCases/Email/Email';
+import { Email } from '../../Email/Email';
 
 export class EmailConsumer {
   private channel: IChannel;
@@ -12,22 +17,25 @@ export class EmailConsumer {
   }
 
   async Startconsume() {
-    await this.channel.assertQueue('emails', {
+    await this.channel.assertQueue(this.queue, {
       durable: true,
     });
     await this.channel.prefetch(1);
-
     this.channel.consume(
-      'emails',
-      message => {
+      this.queue,
+      async message => {
         if (!message) return;
 
-        const messageContent = JSON.parse(message.content.toString());
-        debug(`> EmailConsumer received from {${this.queue}}`);
-        const email = messageContent.email;
-        const link = messageContent.link;
+        const messageContent: ISendMail = JSON.parse(
+          message.content.toString(),
+        );
 
-        console.log(`> EmailConsumer send email to ${email} with link ${link}`);
+        debug(`> EmailConsumer received from {${this.queue}}`);
+        const emailTranponder = await Email.createTransporter();
+        const emailBroadcasting = new EmailBroadcasting(emailTranponder);
+        emailBroadcasting.sendMail(messageContent);
+        debug(`> EmailConsumer sent to {${this.queue}}`);
+
         this.channel.ack(message);
       },
       {

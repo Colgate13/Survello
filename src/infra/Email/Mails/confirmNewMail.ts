@@ -1,4 +1,4 @@
-export const hbs = `<style>
+export const NewAccountAndConfirmMailHbs = `<style>
 .container {
     width: 800px;
     justify-content: center;
@@ -11,14 +11,18 @@ export const hbs = `<style>
 
 
 <div class="container">
-    <label>Olá <strong>{{name}}</strong>! Tudo bem?</label>
+  <label>Bem vindo ao Survello, Sr. <strong>{{name}}</strong>! Tudo bem?</label>
 
     <h3>Você acabou de se registar no nosso sistema</h3>
     <br/>
-    <strong>Clique no link para confirmar sua conta: {{link}}</strong>
+    <strong>Clique no link para confirmar seu email: {{link}}</strong>
 
 </div>
     <br/>
     <br/>
     <h3>By <strong>Survello</strong></h3>
 </div>`;
+
+export default {
+  NewAccountAndConfirmMailHbs,
+};

@@ -5,7 +5,7 @@ import Debug from 'debug';
 const debug = Debug('app:infra:process');
 
 class ProcessController {
-  static PrimaryProcess() {
+  static PrimaryProcess(name = 'SurVello - server worker') {
     if (cluster.isPrimary) {
       process.title = 'SurVello - server primary';
       debug('> Primary process started');
@@ -42,8 +42,8 @@ class ProcessController {
     }
   }
 
-  static SetNameWorker() {
-    process.title = 'SurVello - server worker';
+  static SetNameWorker(name = 'SurVello - server worker') {
+    process.title = name;
   }
 }
 

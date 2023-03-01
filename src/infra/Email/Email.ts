@@ -53,10 +53,16 @@ export class Email {
   }
 
   static async createTransporter(
-    email: IEmail,
-    emailFrom: string,
+    email?: IEmail,
+    emailFrom?: string,
     testMail = false,
   ) {
+    if (!email) {
+      const { email: emailConfig, from } = await import('./EmailConfigs');
+      email = emailConfig;
+      emailFrom = from;
+    }
+
     if (!email.host || !email.port || !email.auth.user || !email.auth.pass)
       throw new Error('Invalid email configuration');
 

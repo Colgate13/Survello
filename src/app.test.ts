@@ -1,7 +1,8 @@
-import { app } from './app';
+import { queueConsumers, webServers } from './app';
 
 describe('app', () => {
   it('Imports is rigth', () => {
-    expect(app).toBeDefined();
+    expect(queueConsumers).toBeDefined();
+    expect(webServers).toBeDefined();
   });
 });
