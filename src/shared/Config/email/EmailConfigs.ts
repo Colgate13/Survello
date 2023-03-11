@@ -1,4 +1,4 @@
-import { IEmail } from './Email';
+import { IEmail } from '../../../infra/Email/IEmail';
 import dotenv from 'dotenv';
 dotenv.config();
 

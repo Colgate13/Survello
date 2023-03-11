@@ -1,2 +1,1 @@
-export * from './newAccount';
-export * from './confirmNewMail';
+export * from './';

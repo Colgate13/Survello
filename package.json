@@ -15,7 +15,8 @@
     "build": "tsc",
     "dev:web": "DEBUG=app:* ts-node --transpile-only src/app.ts start web",
     "dev": "DEBUG=app:* ts-node --transpile-only src/app.ts",
-    "start": "node dist/app.js start web --workers"
+    "start": "node dist/app.js",
+    "start:queue": "node dist/app.js start:queue"
   },
   "repository": {
     "type": "git",

@@ -5,19 +5,16 @@ import {
   TestAccount,
 } from 'nodemailer';
 import Debug from 'debug';
+import { IEmail, IEmailOptions } from './IEmail';
+import {
+  ISend,
+  IBroadcastingSenderReturn,
+} from '../../modules/Broadcasting/useCases/Broadcasting/IBroadcasting';
 
-Debug.selectColor = () => '#00ff00';
+import { BroadcastingError } from '../../modules/Broadcasting/useCases/Broadcasting/Errors/BroadcastingError';
+import { Either, left, right } from '../../core/logic/Either';
+
 const debug = Debug('app:email');
-
-export interface IEmail {
-  host: string;
-  port: number;
-  secure: boolean;
-  auth: {
-    user: string;
-    pass: string;
-  };
-}
 
 export class Email {
   private transporter;
@@ -52,43 +49,52 @@ export class Email {
     this.transporter = tempTransporter;
   }
 
-  static async createTransporter(
-    email?: IEmail,
-    emailFrom?: string,
-    testMail = false,
-  ) {
-    if (!email) {
-      const { email: emailConfig, from } = await import('./EmailConfigs');
-      email = emailConfig;
-      emailFrom = from;
+  static async createTransporter(EmailOptionsProps?: IEmailOptions) {
+    if (!EmailOptionsProps) {
+      const { email, from } = await import(
+        '../../shared/Config/email/EmailConfigs'
+      );
+
+      EmailOptionsProps = {
+        email,
+        emailFrom: from,
+      };
     }
 
-    if (!email.host || !email.port || !email.auth.user || !email.auth.pass)
-      throw new Error('Invalid email configuration');
-
-    if (!emailFrom) throw new Error('Invalid email from configuration');
-
     let testAccont = null;
-    if (testMail || process.env.NODE_ENV !== 'production') {
+
+    if (EmailOptionsProps.testMail || process.env.NODE_ENV !== 'production') {
       testAccont = await createTestAccount();
     }
 
-    return new Email(email, emailFrom, testAccont);
+    return new Email(
+      EmailOptionsProps.email,
+      EmailOptionsProps.emailFrom || EmailOptionsProps.email.auth.user,
+      testAccont,
+    );
   }
 
-  async send(
-    to: string,
-    subject: string,
-    body: string,
+  async send({
+    to,
+    subject,
+    body,
     fromTitle = 'Survello',
-  ) {
-    const message = await this.transporter.sendMail({
-      from: `${fromTitle} <${this.emailFrom}>`,
-      to,
-      subject,
-      html: body,
-    });
-    debug('%O', 'Message sent: %s', message.messageId);
-    debug('Preview URL: %s', getTestMessageUrl(message));
+  }: ISend): IBroadcastingSenderReturn {
+    try {
+      const message = await this.transporter.sendMail({
+        from: `${fromTitle} <${this.emailFrom}>`,
+        to,
+        subject,
+        html: body,
+      });
+
+      debug('%O', 'Message sent: %s', message.messageId);
+      debug('Preview URL: %s', getTestMessageUrl(message));
+
+      return right(true);
+    } catch (error: any) {
+      debug('%O', 'Error sending email: %s', String(error));
+      return left(new BroadcastingError(String(error)));
+    }
   }
 }

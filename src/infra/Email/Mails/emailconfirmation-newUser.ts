@@ -1,4 +1,4 @@
-export const ConfirmNewAccontMailHbs = `<style>
+export const hbs = `<style>
 .container {
     width: 800px;
     justify-content: center;
@@ -13,9 +13,9 @@ export const ConfirmNewAccontMailHbs = `<style>
 <div class="container">
     <label>Olá <strong>{{name}}</strong>! Tudo bem?</label>
 
-    <h3>Você acabou de se registar no nosso sistema</h3>
+    <h3>Você acabou de se registar no nosso sistema usando o email {{email}}</h3>
     <br/>
-    <strong>Clique no link para confirmar sua conta: {{link}}</strong>
+    <strong>Clique no link para confirmar sua conta: {{token}}</strong>
 
 </div>
     <br/>
@@ -23,6 +23,9 @@ export const ConfirmNewAccontMailHbs = `<style>
     <h3>By <strong>Survello</strong></h3>
 </div>`;
 
+export const title = 'Confirmação de email';
+
 export default {
-  ConfirmNewAccontMailHbs,
+  hbs,
+  title,
 };

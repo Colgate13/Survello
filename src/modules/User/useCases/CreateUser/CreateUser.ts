@@ -90,21 +90,28 @@ export class CreateUser {
     await this.userRepository.create(user);
 
     emailProducer.send({
-      name: user.name,
-      type: 'newAccount',
-      email: user.email,
-      subject: 'Bem vindo ao Survello',
+      type: 'email:confirmation-newUser',
+      data: {
+        to: user.email,
+        bodyProps: {
+          name: user.name,
+          email: user.email,
+          token: `${user.password}-${user.id}`,
+        },
+        subject: 'Confirmação de email',
+      },
     });
 
     return right(user);
   }
 }
+
 import { PrismaUsersRepository } from '../../repositories/prisma/UsersRepository';
 
 (async () => {
   console.log('Criando user');
   const user = {
-    name: 'John Doe1',
+    name: 'Gabriel Barros',
     email: 'gabreilbarros13@gmail.com',
     password: '123456',
   };
