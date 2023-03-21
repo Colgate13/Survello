@@ -21,9 +21,11 @@ type CreateUserReturn = Either<InvalidEmailError | InvalidPasswordError, User>;
 
 export class CreateUser {
   protected userRepository: IUsersRepository;
+  protected queueInstance: Queu;
 
-  constructor(UserRepository: IUsersRepository) {
+  constructor(UserRepository: IUsersRepository, queueInstance: Queu) {
     this.userRepository = UserRepository;
+    this.queueInstance = queueInstance;
   }
 
   async create({
@@ -42,8 +44,7 @@ export class CreateUser {
       return left(passwordOrError.value);
     }
 
-    const queu = await Queu.create();
-    const emailProducer = new EmailProducer(queu.channel);
+    const emailProducer = new EmailProducer(this.queueInstance.channel);
 
     if (!emailProducer)
       return left(new InvalidEmailError('Não foi possivel enviar o email'));
@@ -105,17 +106,3 @@ export class CreateUser {
     return right(user);
   }
 }
-
-import { PrismaUsersRepository } from '../../repositories/prisma/UsersRepository';
-
-(async () => {
-  console.log('Criando user');
-  const user = {
-    name: 'Gabriel Barros',
-    email: 'gabreilbarros13@gmail.com',
-    password: '123456',
-  };
-  const createUser = new CreateUser(new PrismaUsersRepository());
-
-  console.log(await createUser.create(user));
-})();
