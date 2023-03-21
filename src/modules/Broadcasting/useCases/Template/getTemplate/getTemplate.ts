@@ -47,7 +47,6 @@ export class GetTemplate {
         titleRawContent = title;
       }
     } catch (error) {
-      console.log(error);
       return left(
         new InvalidTemplateError(
           `Template not found in local storage: [../../../infra/Email/Mails/${templateType}].ts`,

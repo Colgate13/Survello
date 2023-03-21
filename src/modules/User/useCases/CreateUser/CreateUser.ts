@@ -47,7 +47,7 @@ export class CreateUser {
     const emailProducer = new EmailProducer(this.queueInstance.channel);
 
     if (!emailProducer)
-      return left(new InvalidEmailError('Não foi possivel enviar o email'));
+      return left(new InvalidEmailError('Email Producer not found'));
 
     await passwordOrError.value.setHashPassword();
 
@@ -91,7 +91,7 @@ export class CreateUser {
     await this.userRepository.create(user);
 
     emailProducer.send({
-      type: 'email:confirmation-newUser',
+      type: 'email-confirmation-newUser',
       data: {
         to: user.email,
         bodyProps: {
