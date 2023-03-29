@@ -69,4 +69,14 @@ describe('Test Authenticator UseCase', () => {
     expect(user.isRight()).toEqual(false);
     expect(user.value).toBeInstanceOf(InvalidEmailOrPasswordError);
   });
+
+  it('should be a dont auth User Email exist but password invalid', async () => {
+    const user = await authenticator.authUser({
+      email: 'gabrielbarros13@gmail.com',
+      password: '1515',
+    });
+
+    expect(user.isRight()).toEqual(false);
+    expect(user.value).toBeInstanceOf(InvalidEmailOrPasswordError);
+  });
 });
