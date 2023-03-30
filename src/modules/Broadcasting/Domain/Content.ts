@@ -2,7 +2,7 @@ import { Either, left, right } from '../../../core/logic/Either';
 import { compile } from 'handlebars';
 import { InvalidContentError } from './Errors/InvalidContentError';
 
-type IContentCompose = {
+export type IContentCompose = {
   [key: string]: string;
 };
 
