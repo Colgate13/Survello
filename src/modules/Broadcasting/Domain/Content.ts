@@ -30,6 +30,7 @@ export class Content {
     const messageCompose = mailTemplateParse(contentToCompose);
 
     this.content = messageCompose;
+    return this;
   }
 
   private constructor(content: string) {

@@ -25,8 +25,17 @@ export class Template extends Entity<ITemplate> {
     this.props.content = content;
   }
 
-  set setTitle(title: string) {
+  // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
+  set title(title: Title) {
+    this.props.title = title;
+  }
+
+  set titleValue(title: string) {
     this.props.title.value = title;
+  }
+
+  set contentValue(content: string) {
+    this.props.content.value = content;
   }
 
   static create(

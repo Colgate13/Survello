@@ -12,7 +12,7 @@ import {
 } from '../../modules/Broadcasting/useCases/Broadcasting/IBroadcasting';
 
 import { BroadcastingError } from '../../modules/Broadcasting/useCases/Broadcasting/Errors/BroadcastingError';
-import { Either, left, right } from '../../core/logic/Either';
+import { left, right } from '../../core/logic/Either';
 
 const debug = Debug('app:email');
 
