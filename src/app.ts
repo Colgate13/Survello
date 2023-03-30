@@ -38,7 +38,7 @@ export async function queueConsumers(
     ProcessController.PrimaryProcess('SurVello - queu worker');
   } else {
     ProcessController.SetNameWorker('SurVello - queu worker');
-    const queu = await Queu.create();
+    const queu = await Queu.getInstance();
     const consumers = new Consumers(queu.channel);
 
     if (onlyConsumer) {

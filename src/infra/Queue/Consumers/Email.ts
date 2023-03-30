@@ -5,13 +5,14 @@ import { InstanceTemplate } from '../../../modules/Broadcasting/useCases/Templat
 import { Broadcasting } from '../../../modules/Broadcasting/useCases/Broadcasting/Broadcasting';
 import { Email } from '../../Email/Email';
 import { GetTemplate } from '../../../modules/Broadcasting/useCases/Template/getTemplate/getTemplate';
+import { IContentCompose } from '../../../modules/Broadcasting/Domain/Content';
 
 interface IEmailProps {
   type: string;
   data: {
     to: string;
     subject: string;
-    bodyProps: object;
+    bodyProps: IContentCompose;
     fromTitle?: string;
   };
 }
