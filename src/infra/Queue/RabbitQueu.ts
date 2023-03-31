@@ -9,7 +9,7 @@ export class Queu {
   public channel: amqp.Channel;
   private static instance: Queu;
 
-  private constructor(channel: amqp.Channel) {
+  constructor(channel: amqp.Channel) {
     this.channel = channel;
   }
 
@@ -34,6 +34,7 @@ export class Queu {
           vhost: '/',
         };
       }
+
       const connection = await amqp.connect(rabbitmqConnection);
       const channel = await connection.createChannel();
 
