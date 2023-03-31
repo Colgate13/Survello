@@ -11,11 +11,13 @@ export class ServerHttp {
   private app: express.Application;
   private server: http.Server;
   private port: number | string;
+  private apiVersion: string;
 
   constructor(PORT: number | string) {
     this.app = express();
     this.server = http.createServer(this.app);
     this.port = PORT;
+    this.apiVersion = process.env.API_VERSION || '1.0.0';
   }
 
   routes() {
@@ -31,6 +33,9 @@ export class ServerHttp {
     this.middlewareHandlers();
 
     this.routes();
+
+    this.handleErrors();
+
     this.server.listen(this.port, () =>
       debug(`Listening on port ${this.port}`),
     );
@@ -39,9 +44,12 @@ export class ServerHttp {
   middlewareHandlers() {
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       req.debug = (txt: string) => debug(`${req.method} ${req.url} ${txt}`);
+      req.version = this.apiVersion;
       next();
     });
+  }
 
+  handleErrors() {
     this.app.use(
       (
         err: Error,

@@ -21,11 +21,11 @@ type CreateUserReturn = Either<InvalidEmailError | InvalidPasswordError, User>;
 
 export class CreateUser {
   protected userRepository: IUsersRepository;
-  protected queueInstance: Queu;
+  private queueInstance: Queu | null;
 
-  constructor(UserRepository: IUsersRepository, queueInstance: Queu) {
+  constructor(UserRepository: IUsersRepository, queueInstance?: Queu) {
     this.userRepository = UserRepository;
-    this.queueInstance = queueInstance;
+    this.queueInstance = queueInstance || null;
   }
 
   async create({
@@ -44,7 +44,9 @@ export class CreateUser {
       return left(passwordOrError.value);
     }
 
-    const emailProducer = new EmailProducer(this.queueInstance.channel);
+    const queueInstance = this.queueInstance || (await Queu.getInstance());
+
+    const emailProducer = new EmailProducer(queueInstance.channel);
 
     if (!emailProducer)
       return left(new InvalidEmailError('Email Producer not found'));

@@ -22,10 +22,15 @@ export class Email {
   private testAccont: TestAccount | null;
 
   private constructor(
-    email: IEmail,
     emailFrom: string,
+    email: IEmail | null,
     testAccont?: TestAccount | null,
   ) {
+    if (!email && !testAccont)
+      throw new Error(
+        'Email configuration is invalid please insert Email or TestAccount',
+      );
+
     this.testAccont = testAccont || null;
     this.emailFrom = emailFrom;
 
@@ -41,6 +46,8 @@ export class Email {
         },
       });
     } else {
+      if (!email) throw new Error('Email configuration is invalid');
+
       tempTransporter = createTransport(email);
     }
 
@@ -50,28 +57,30 @@ export class Email {
   }
 
   static async createTransporter(EmailOptionsProps?: IEmailOptions) {
-    if (!EmailOptionsProps) {
-      const { email, from } = await import(
-        '../../shared/Config/email/EmailConfigs'
-      );
+    if (process.env.NODE_ENV === 'production') {
+      if (!EmailOptionsProps) {
+        const { email, from } = await import(
+          '../../shared/Config/email/EmailConfigs'
+        );
 
-      EmailOptionsProps = {
-        email,
-        emailFrom: from,
-      };
+        if (!email || !from) throw new Error('Email configuration is invalid');
+
+        EmailOptionsProps = {
+          email,
+          emailFrom: from,
+        };
+      }
+
+      const { email, emailFrom } = EmailOptionsProps;
+      if (!email || !emailFrom)
+        throw new Error('Email configuration is invalid');
+
+      return new Email(emailFrom, email);
     }
 
-    let testAccont = null;
+    const testAccount = await createTestAccount();
 
-    if (EmailOptionsProps.testMail || process.env.NODE_ENV !== 'production') {
-      testAccont = await createTestAccount();
-    }
-
-    return new Email(
-      EmailOptionsProps.email,
-      EmailOptionsProps.emailFrom || EmailOptionsProps.email.auth.user,
-      testAccont,
-    );
+    return new Email('survello.local@survello.com', null, testAccount);
   }
 
   async send({
