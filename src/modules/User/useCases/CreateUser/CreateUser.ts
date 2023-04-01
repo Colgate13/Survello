@@ -61,9 +61,7 @@ export class CreateUser {
         country: '',
         postalCode: '',
         features: [
-          'read:user',
           'read:user:self',
-          'read:user:list',
           'update:user:self',
           'incomplete:user',
 
