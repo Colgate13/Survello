@@ -4,7 +4,7 @@ declare namespace Express {
     debug: (txt: string) => void;
     user: {
       id: string;
+      features: string[];
     };
-    features: string[];
   }
 }
