@@ -29,6 +29,29 @@ users.put(
   },
 );
 
+// @delete User
+users.delete(
+  '/',
+  ensureAuthenticated,
+  authorize(['read:user:self', 'create:session']),
+  (request: Request, response: Response) => {
+    response.send({
+      message: 'Delete User',
+    });
+  },
+);
+
+// @Confirm Token
+users.get(
+  '/confirmations/confirmation',
+  (request: Request, response: Response) => {
+    response.send({
+      message: 'Confirm Token',
+      token: request.query.token,
+    });
+  },
+);
+
 users.use('/', (request: Request, response: Response) => {
   response.send({
     message: 'Welcome to users route',

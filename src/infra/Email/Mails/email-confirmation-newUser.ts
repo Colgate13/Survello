@@ -15,7 +15,7 @@ export const hbs = `<style>
 
     <h3>Você acabou de se registar no nosso sistema usando o email {{email}}</h3>
     <br/>
-    <strong>Clique no link para confirmar sua conta: {{token}}</strong>
+    <strong>Clique no link para confirmar sua conta: <a href={{linkConfirm}}>Click here</a></strong>
 
 </div>
     <br/>

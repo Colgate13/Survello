@@ -11,6 +11,8 @@ import { AccountAlreadyExistsError } from '../Errors/AccountAlreadyExistsError';
 import { EmailProducer } from '../../../../infra/Queue/Producers/Email';
 import { Queu } from '../../../../infra/Queue/RabbitQueu';
 
+import { Confirmation } from '../Confirmations/Confirmation';
+
 export interface ICreateUser {
   name: string;
   email: string;
@@ -88,7 +90,17 @@ export class CreateUser {
       return left(new AccountAlreadyExistsError(user.email));
     }
 
+    const token = await Confirmation.createConfirmation(
+      user,
+      'email-confirmation',
+    );
+
+    if (token.isLeft())
+      return left(new Error('Error to create confirmation token'));
+
     await this.userRepository.create(user);
+
+    const createLink = `${process.env.APP_URL}/users/confirmations/confirmation?token=${token.value}`;
 
     emailProducer.send({
       type: 'email-confirmation-newUser',
@@ -97,7 +109,7 @@ export class CreateUser {
         bodyProps: {
           name: user.name,
           email: user.email,
-          token: `${user.password}-${user.id}`,
+          linkConfirm: createLink,
         },
         subject: 'Confirmação de email',
       },
