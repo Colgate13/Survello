@@ -65,7 +65,8 @@ export class CreateUser {
         features: [
           'read:user:self',
           'update:user:self',
-          'incomplete:user',
+          'email:inconfirmed',
+          'plan:noset',
 
           'read:activation_token',
           'read:recovery_token',
