@@ -34,39 +34,43 @@ export class EmailConsumer {
     this.channel.consume(
       this.queue,
       async message => {
-        debug(`> EmailConsumer received from {${this.queue}}`);
+        try {
+          debug(`> EmailConsumer received from {${this.queue}}`);
 
-        if (!message) return;
+          if (!message) return;
 
-        const emailBroadcasting = await Email.createTransporter();
+          const emailBroadcasting = await Email.createTransporter();
 
-        const messageContent: IEmailProps = JSON.parse(
-          message.content.toString(),
-        );
-
-        const getTemplate = new GetTemplate();
-        const broadcasting = new Broadcasting(emailBroadcasting);
-        const template = await getTemplate.getLocalTemplate({
-          templateType: messageContent.type,
-          title: messageContent?.data?.subject,
-        });
-
-        if (!template || template.isLeft()) {
-          debug(
-            `> EmailConsumer ERROR IN ${this.queue} - Error: ${template.value}`,
+          const messageContent: IEmailProps = JSON.parse(
+            message.content.toString(),
           );
 
-          return;
+          const getTemplate = new GetTemplate();
+          const broadcasting = new Broadcasting(emailBroadcasting);
+          const template = await getTemplate.getLocalTemplate({
+            templateType: messageContent.type,
+            title: messageContent?.data?.subject,
+          });
+
+          if (!template || template.isLeft()) {
+            debug(
+              `> EmailConsumer ERROR IN ${this.queue} - Error: ${template.value}`,
+            );
+
+            return;
+          }
+
+          template.value.content.compose(messageContent?.data?.bodyProps);
+
+          broadcasting.send({
+            to: String(messageContent?.data?.to),
+            template: template.value,
+          });
+
+          this.channel.ack(message);
+        } catch (error) {
+          debug(`> EmailConsumer ERROR IN ${this.queue} - Error: ${error}`);
         }
-
-        template.value.content.compose(messageContent?.data?.bodyProps);
-
-        broadcasting.send({
-          to: String(messageContent?.data?.to),
-          template: template.value,
-        });
-
-        this.channel.ack(message);
       },
       {
         noAck: false,

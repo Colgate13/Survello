@@ -13,9 +13,9 @@ export const hbs = `<style>
 <div class="container">
     <label>Olá <strong>{{name}}</strong>! Tudo bem?</label>
 
-    <h3>Você acabou de se registar no nosso sistema usando o email {{email}}</h3>
+    <h3>Você acabou de alterar seu email no sistema para o email: "{{email}}"</h3>
     <br/>
-    <strong>Clique no link para confirmar sua conta: <a href={{linkConfirm}}>Click here</a></strong>
+    <strong>Clique no link para confirmar seu novo email: <a href={{linkConfirm}}>Click here</a></strong>
 
 </div>
     <br/>

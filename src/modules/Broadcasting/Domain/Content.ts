@@ -21,7 +21,9 @@ export class Content {
   public compose(contentToCompose: IContentCompose) {
     if (!Content.validateCompose(this.content, contentToCompose)) {
       throw new InvalidContentError(
-        'InvalidContentError to compose message. INTERFACE PROPS NOT MATCH',
+        `InvalidContentError to compose message. INTERFACE PROPS NOT MATCH
+        contentToCompose: ${JSON.stringify(contentToCompose)}
+        content: ${this.content}`,
       );
     }
 

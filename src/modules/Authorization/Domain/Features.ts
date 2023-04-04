@@ -4,9 +4,11 @@ const userFetures = [
   'read:user:self',
   'read:user:list',
   'update:user',
-  'incomplete:user',
+  'email:inconfirmed',
   'ban:user',
 ];
+
+const plans = ['plan:noset', 'plan:free', 'plan:premium'];
 
 const tokenFetures = [
   'read:activation_token',
@@ -20,6 +22,7 @@ const sessionFetures = ['create:session', 'read:session'];
 
 const features = new Set([
   ...userFetures,
+  ...plans,
   ...tokenFetures,
   ...sessionFetures,
   ...ADMIN,

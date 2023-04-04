@@ -16,6 +16,13 @@ export interface JWTTokenPayload {
   sub: string;
 }
 
+export interface JWTConfirmationTokenPayload {
+  token: string;
+  action: string;
+  exp: number;
+  sub: string;
+}
+
 export class JWT {
   public readonly userId: string;
   public readonly token: string;
@@ -38,6 +45,21 @@ export class JWT {
     }
   }
 
+  static verifyAndDecodeConfirmationToken(
+    token: string,
+  ): Either<InvalidJWTTokenError, JWTConfirmationTokenPayload> {
+    try {
+      const decoded = verify(
+        token,
+        jwtConfig.jwtConfirmation.secret,
+      ) as JWTConfirmationTokenPayload;
+
+      return right(decoded);
+    } catch (err) {
+      return left(new InvalidJWTTokenError());
+    }
+  }
+
   static createFromJWT(token: string): Either<InvalidJWTTokenError, JWT> {
     const jwtPayloadOrError = this.verifyAndDecodeToken(token);
 
@@ -52,6 +74,30 @@ export class JWT {
     });
 
     return right(jwt);
+  }
+
+  static createJwtConfirmationToken(
+    user: User,
+    token: string,
+    action: string,
+  ): Either<InvalidJWTTokenError, string> {
+    const jwtPayloadOrError = sign(
+      {
+        token,
+        action,
+      },
+      jwtConfig.jwtConfirmation.secret,
+      {
+        subject: user.id,
+        expiresIn: jwtConfig.jwtConfirmation.expiresIn,
+      },
+    );
+
+    if (!jwtPayloadOrError) {
+      return left(new InvalidJWTTokenError());
+    }
+
+    return right(jwtPayloadOrError);
   }
 
   static signUser(user: User): Either<InvalidJWTTokenError, JWT> {
