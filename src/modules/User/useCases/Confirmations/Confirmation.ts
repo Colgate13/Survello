@@ -19,6 +19,12 @@ export interface IConfirm {
   action: string;
 }
 
+export interface IConfirmed {
+  user: User;
+  action: string;
+  confirmed: boolean;
+}
+
 export class Confirmation {
   protected userRepository: IUsersRepository;
 
@@ -56,12 +62,10 @@ export class Confirmation {
     return sendOrNot;
   }
 
-  async confirm(jwt: string): Promise<Either<Error, IConfirm>> {
+  async confirm(jwt: string): Promise<Either<Error, IConfirmed>> {
     const jwtPayloadOrError = JWT.verifyAndDecodeConfirmationToken(jwt);
 
     if (jwtPayloadOrError.isLeft()) {
-      debug(`> ConfirmationsConsumer 3`);
-
       return left(jwtPayloadOrError.value);
     }
 
@@ -70,7 +74,6 @@ export class Confirmation {
     );
 
     if (!user) {
-      debug(`> ConfirmationsConsumer 4`);
       return left(new Error('User not found'));
     }
 
@@ -82,17 +85,19 @@ export class Confirmation {
 
     // if (!isMatch) return left(new Error('Confirmation token does not match'));
 
-    let confirmOrNot: IConfirm;
+    let confirmOrNot: IConfirmed;
 
     /* eslint-disable no-case-declarations */
     switch (jwtPayloadOrError.value.action) {
       case 'email-confirmation':
         const confirmationEmail = new ConfirmationEmail(this.userRepository);
 
-        const confirm = await confirmationEmail.confirmEmail(jwt);
+        const confirm = await confirmationEmail.confirm(
+          user,
+          jwtPayloadOrError.value,
+        );
 
         if (confirm.isLeft()) {
-          debug(`> ConfirmationsConsumer 5`);
           return left(confirm.value);
         }
 
@@ -100,20 +105,17 @@ export class Confirmation {
 
         break;
       default:
-        debug(`> ConfirmationsConsumer 6`);
         return left(new Error('Action not found'));
     }
 
     if (!confirmOrNot) {
-      debug(`> ConfirmationsConsumer 7`);
       return left(new Error('Confirmation not found'));
     }
 
     return right({
-      confirm: true,
-      jwtDecode: jwtPayloadOrError.value,
-      userId: user.id,
-      action: jwtPayloadOrError.value.action,
+      user: confirmOrNot.user,
+      action: confirmOrNot.action,
+      confirmed: confirmOrNot.confirmed,
     });
   }
 }

@@ -34,10 +34,8 @@ export class ConfirmationsConsumer {
           const { jwt } = JSON.parse(message.content.toString());
 
           const confirmation = new Confirmation(new PrismaUsersRepository());
-          debug(`> ConfirmationsConsumer !!!`);
 
           const confirmOrNot = await confirmation.confirm(jwt);
-          debug(`> ConfirmationsConsumer ${confirmOrNot}!!!`);
 
           if (confirmOrNot.isLeft()) {
             debug(
@@ -47,7 +45,7 @@ export class ConfirmationsConsumer {
           }
 
           debug(
-            `> ConfirmationsConsumer success in ${this.queue} - ${confirmOrNot.value.action}:${confirmOrNot.value.userId}`,
+            `> ConfirmationsConsumer success in ${this.queue} - ${confirmOrNot.value.action}:${confirmOrNot.value.user.id}`,
           );
 
           this.channel.ack(message);

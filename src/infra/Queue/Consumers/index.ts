@@ -18,7 +18,7 @@ export class Consumers {
   }
 
   async Start() {
-    // await this.emailConsumer.Startconsume();
+    await this.emailConsumer.Startconsume();
     await this.confirmationsConsumer.Startconsume();
   }
 

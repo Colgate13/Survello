@@ -1,6 +1,9 @@
-import { Either, left } from '../../../../core/logic/Either';
+import { User } from '../../../../modules/User/Domain/User';
+
+import { JWTConfirmationTokenPayload } from '../../../../modules/User/Domain/jwt';
+import { Either, left, right } from '../../../../core/logic/Either';
 import { IUsersRepository } from '../../../../modules/User/repositories/IUsersRepository';
-import { Confirmation, IConfirm } from './Confirmation';
+import { Confirmation, IConfirmed } from './Confirmation';
 import Debug from 'debug';
 
 const debug = Debug('app:queue:consumer:Confirmations');
@@ -12,24 +15,15 @@ export class ConfirmationEmail {
     this.userRepository = UserRepository;
   }
 
-  async confirmEmail(jwt: string): Promise<Either<Error, IConfirm>> {
-    const confirmation = new Confirmation(this.userRepository);
-
-    debug(`> ConfirmationsConsumer 777`);
-    const confirmOrNot = await confirmation.confirm(jwt);
-
-    if (confirmOrNot.isLeft()) {
-      return left(confirmOrNot.value);
-    }
-
-    const { action, userId } = confirmOrNot.value;
-    const user = await this.userRepository.findById(userId);
-
+  async confirm(
+    user: User,
+    jwtDecoded: JWTConfirmationTokenPayload,
+  ): Promise<Either<Error, IConfirmed>> {
     if (!user) {
       return left(new Error('User not found'));
     }
 
-    if (action !== 'email-confirmation') {
+    if (jwtDecoded.action !== 'email-confirmation') {
       return left(new Error('Action not found'));
     }
 
@@ -45,6 +39,10 @@ export class ConfirmationEmail {
 
     await this.userRepository.save(user);
 
-    return confirmOrNot;
+    return right({
+      user,
+      action: jwtDecoded.action,
+      confirmed: true,
+    });
   }
 }
