@@ -31,16 +31,16 @@ users.put(
 );
 
 // @delete User
-users.delete(
-  '/',
-  ensureAuthenticated,
-  authorize(['read:user:self', 'create:session']),
-  (request: Request, response: Response) => {
-    response.send({
-      message: 'Delete User',
-    });
-  },
-);
+// users.delete(
+//   '/',
+//   ensureAuthenticated,
+//   authorize(['read:user:self', 'create:session']),
+//   (request: Request, response: Response) => {
+//     response.send({
+//       message: 'Delete User',
+//     });
+//   },
+// );
 
 // @Confirm Token
 users.get('/confirmations/confirmation', confirmationController.execute);
