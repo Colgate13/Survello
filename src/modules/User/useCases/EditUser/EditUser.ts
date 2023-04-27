@@ -10,7 +10,6 @@ import { EmailProducer } from '../../../../infra/Queue/Producers/Email';
 import { Queu } from '../../../../infra/Queue/RabbitQueu';
 
 export interface IEditUser {
-  id: string;
   email?: string;
   name?: string;
   password?: string;

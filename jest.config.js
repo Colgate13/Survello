@@ -12,6 +12,7 @@ module.exports = {
     '!src/**/I*.ts',
     '!src/**/**/**/Errors/*.ts',
     '!src/**/repositories/**/*.ts',
+    '!src/**/**/useCases/**/infra/**/Controllers/*.ts',
     '!src/**/mappers/*.ts',
     '!src/**/@types/*.ts',
     '!src/**/config/*.ts',
@@ -20,5 +21,7 @@ module.exports = {
     '!src/shared/Error/*',
     '!src/shared/Config/**',
     '!src/server.ts',
+    '!src/app.ts',
   ],
 };
+// modules / User / useCases / AuthenticateUser / infra / http / Controllers;
